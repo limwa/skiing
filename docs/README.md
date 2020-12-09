@@ -1,4 +1,4 @@
-# Projeto XXXX
+# Skiing
 
 ## FPRO/MIEIC, 2020/21
 
