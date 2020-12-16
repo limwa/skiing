@@ -38,7 +38,7 @@ _WIP_
 
 ### Tarefas
 
-- [ ] Obter imagens do cenário e do esquiador em cada uma das direções
+- [x] Obter imagens do cenário e do esquiador em cada uma das direções
 - [ ] Criar ilusão de movimento do esquiador e possibilitar alteração da direção do mesmo
 - [ ] Adicionar animação de voo (não é usada no modo _slalom_)
 - [ ] Posicionar postes
@@ -48,4 +48,4 @@ _WIP_
 - [ ] Adicionar menu onde será possível alterar a dificuldade (velocidade e número de postes)
 - [ ] _TBD_
 
-_Atualizado pela última vez a 08/12/2020_
+_Atualizado pela última vez a 15/12/2020_
