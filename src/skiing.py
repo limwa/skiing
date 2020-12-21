@@ -3,15 +3,15 @@
 @author: limwa
 """
 
+import os
+import sys
+
 import pygame
 import pygame.locals
 import pygame.display
 import pygame.event
 import pygame.image
 import pygame.sprite
-
-import os
-import sys
 
 
 WIDTH = 800
