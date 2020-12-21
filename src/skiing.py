@@ -4,13 +4,15 @@
 """
 
 import pygame
-from pygame.locals import *
-
+import pygame.locals
 import pygame.display
 import pygame.event
 import pygame.image
+import pygame.sprite
 
 import os
+import sys
+
 
 WIDTH = 800
 HEIGHT = 600
@@ -23,7 +25,7 @@ def load_image(name):
     """
     Loads an image from the assets folder.
     """
-    
+
     path = os.path.join(ASSETS, name)
     img = pygame.image.load(path)
     if img.get_alpha() is None:
@@ -52,7 +54,7 @@ def main():
     i= 0
     while True:
         for event in pygame.event.get():
-            if event.type == QUIT:
+            if event.type == pygame.locals.QUIT:
                 return
 
         i += 1
