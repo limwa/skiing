@@ -6,25 +6,27 @@
 import os
 import sys
 
+from typing import Tuple
+
 import pygame
 import pygame.locals
 import pygame.display
-import pygame.event
 import pygame.image
+import pygame.event
 import pygame.sprite
-
+import pygame.time
 
 WIDTH = 800
 HEIGHT = 600
 
+DIFICULTY_MULTIPLIER = 1
+TIME_ADJUST = 0.1
+
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 ASSETS = os.path.join(ROOT, 'assets')
 
-
 def load_image(name):
-    """
-    Loads an image from the assets folder.
-    """
+    """ Loads an image from the assets folder. """
 
     path = os.path.join(ASSETS, name)
     img = pygame.image.load(path)
@@ -35,11 +37,40 @@ def load_image(name):
 
     return img
 
+class Skier(pygame.sprite.Sprite):
+    """ Represents a Skiier (player) in the game """
+    def __init__(self, pos: list[float], velocity: list[float], angle: float, inverted: bool) -> None:
+        pygame.sprite.Sprite.__init__(self)
+
+        self.pos = pos
+        self.set_velocity(velocity)
+        self.set_angle(0, inverted)
+
+        image = load_image('skier-0.png')
+        self.image = image
+        self.rect = image.get_rect()
+
+    def set_angle(self, angle: float, inverted: bool):
+        self.angle = angle
+        self.inverted = inverted
+
+    def set_position(self, pos: list[float]):
+        self.pos = pos
+
+    def set_velocity(self, velocity: list[float]):
+        assert len(velocity) == len(self.pos), 'Length of velocity vector must be equal to that of position vector'
+        self.velocity = velocity
+
+    def update(self, dt):
+        for i in range(len(self.pos)):
+            self.pos[i] += self.velocity[i] * DIFICULTY_MULTIPLIER * TIME_ADJUST * dt
+
+    def render(self, screen: pygame.Surface) -> None:
+        screen.blit(self.image, self.pos) # type: ignore
+
 
 def main():
-    """
-    Handles the game startup.
-    """
+    """ Handles the game startup. """
 
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -49,18 +80,28 @@ def main():
     background = background.convert()
     background.fill((245, 245, 245))
 
-    skiers = [load_image(i) for i in ['skier-0.png', 'skier-1.png', 'skier-2.png', 'skier-3.png', 'skier-2.png', 'skier-1.png']]
+    player = Skier([WIDTH // 2, 50], [0, 1], 0, False)
 
-    i= 0
+    clock = pygame.time.Clock()
     while True:
+        dt = clock.tick(60)
+
         for event in pygame.event.get():
             if event.type == pygame.locals.QUIT:
                 return
 
-        i += 1
+            elif event.type == pygame.locals.KEYDOWN:
+                if event.key == pygame.locals.K_DOWN:
+                    player.set_velocity([0, 1])
+                elif event.key == pygame.locals.K_UP:
+                    player.set_velocity([0, -1])
+
+        player.update(dt)
 
         screen.blit(background, (0, 0))
-        screen.blit(skiers[(i // 2000) % len(skiers)], (WIDTH // 2 - skiers[(i // 2000) % len(skiers)].get_width() // 2, HEIGHT // 2 - skiers[(i // 2000) % len(skiers)].get_height() // 2))
+        player.render(screen) # type: ignore
+
+
         pygame.display.flip()
 
 if __name__ == '__main__':
