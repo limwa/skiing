@@ -6,7 +6,7 @@
 import os
 import sys
 
-from typing import Tuple
+from typing import List, Tuple
 
 import pygame
 import pygame.locals
@@ -39,7 +39,7 @@ def load_image(name):
 
 class Skier(pygame.sprite.Sprite):
     """ Represents a Skiier (player) in the game """
-    def __init__(self, pos: list[float], velocity: list[float], angle: float, inverted: bool) -> None:
+    def __init__(self, pos: List[float], velocity: List[float], angle: float, inverted: bool) -> None:
         pygame.sprite.Sprite.__init__(self)
 
         self.pos = pos
@@ -54,10 +54,10 @@ class Skier(pygame.sprite.Sprite):
         self.angle = angle
         self.inverted = inverted
 
-    def set_position(self, pos: list[float]):
+    def set_position(self, pos: List[float]):
         self.pos = pos
 
-    def set_velocity(self, velocity: list[float]):
+    def set_velocity(self, velocity: List[float]):
         assert len(velocity) == len(self.pos), 'Length of velocity vector must be equal to that of position vector'
         self.velocity = velocity
 
