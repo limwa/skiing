@@ -20,7 +20,8 @@ WIDTH = 800
 HEIGHT = 600
 
 DIFICULTY_MULTIPLIER = 1
-TIME_ADJUST = 0.1
+TIME_ADJUST = 0.001 # conversion of ms to s
+SCALE_ADJUST = 100 # convert units to px
 
 ROOT = os.path.join(os.path.dirname(__file__), '..')
 ASSETS = os.path.join(ROOT, 'assets')
@@ -39,6 +40,9 @@ def load_image(name):
 
 class Skier(pygame.sprite.Sprite):
     """ Represents a Skiier (player) in the game """
+
+    CONVERSION_CONSTANT = DIFICULTY_MULTIPLIER * TIME_ADJUST * SCALE_ADJUST
+
     def __init__(self, pos: List[float], velocity: List[float], angle: float, inverted: bool) -> None:
         pygame.sprite.Sprite.__init__(self)
 
@@ -63,7 +67,9 @@ class Skier(pygame.sprite.Sprite):
 
     def update(self, dt):
         for i in range(len(self.pos)):
-            self.pos[i] += self.velocity[i] * DIFICULTY_MULTIPLIER * TIME_ADJUST * dt
+            self.pos[i] += self.velocity[i] * self.CONVERSION_CONSTANT * dt
+
+        print(f"pos is now {self.pos}")
 
     def render(self, screen: pygame.Surface) -> None:
         screen.blit(self.image, self.pos) # type: ignore
