@@ -39,7 +39,7 @@ _WIP_
 ### Tarefas
 
 - [x] Obter imagens do cenário e do esquiador em cada uma das direções
-- [ ] Criar ilusão de movimento do esquiador e possibilitar alteração da direção do mesmo
+- [x] Criar ilusão de movimento do esquiador e possibilitar alteração da direção do mesmo
 - [ ] Adicionar animação de voo (não é usada no modo _slalom_)
 - [ ] Posicionar postes
 - [ ] Decorar o cenário (árvores e _moguls_)
