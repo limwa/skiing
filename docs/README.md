@@ -48,4 +48,4 @@ _WIP_
 - [ ] Adicionar menu onde será possível alterar a dificuldade (velocidade e número de postes)
 - [ ] _TBD_
 
-_Atualizado pela última vez a 15/12/2020_
+_Atualizado pela última vez a 26/12/2020_
