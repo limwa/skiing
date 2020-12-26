@@ -4,9 +4,7 @@
 """
 
 import os
-
 import math
-from typing import List, Tuple, Union
 
 from pygame import Vector2
 
@@ -20,6 +18,7 @@ import pygame.time
 import pygame.draw
 import pygame.transform
 
+from typing import List, Tuple, Union
 
 # EDIT THESE CONSTANTS AT YOUR WILL
 # SCREEN CONSTANTS
