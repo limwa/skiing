@@ -113,12 +113,11 @@ class Skier(pygame.sprite.Sprite):
 
         data = self.__states[s]
 
-        d_angle = self.__angle - data[0]
         self.__angle = data[0]
         self.__angle_rad = math.radians(self.__angle)
 
         # rotate velocity towards the new direction
-        self.velocity.rotate_ip(d_angle)
+        self.velocity = self.velocity.length() * Vector2(math.sin(self.__angle_rad), math.cos(self.__angle_rad))
 
         self.image, self.rect = data[1]
 
