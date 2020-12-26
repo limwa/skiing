@@ -41,7 +41,7 @@ _WIP_
 - [x] Obter imagens do cenário e do esquiador em cada uma das direções
 - [x] Criar ilusão de movimento do esquiador e possibilitar alteração da direção do mesmo
 - [ ] Adicionar animação de voo (não é usada no modo _slalom_)
-- [ ] Posicionar postes
+- [x] Posicionar postes
 - [ ] Decorar o cenário (árvores e _moguls_)
 - [ ] Adicionar colisão (obstáculos, postes, ...)
 - [ ] Adicionar meta e cálculo da pontuação final (penalização de 5? segundos por cada poste perdido)
