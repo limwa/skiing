@@ -5,6 +5,7 @@
 
 import os
 import math
+import random
 
 from pygame import Vector2
 
@@ -27,21 +28,29 @@ HEIGHT = 600
 
 # TIME CONSTANTS
 TIME_ADJUST = 0.001  # conversion of ms to s
-DIFICULTY_MULTIPLIER = 2
+DIFICULTY_MULTIPLIER = 1
 assert DIFICULTY_MULTIPLIER > 0
 
 # ENVIRONMENT CONSTANTS
-G = math.pi ** math.pi
+G = 100
 PLANE_INCLINATION = 60  # inclination of the plane in degrees
-FRICTION_CONSTANT = 0.25  # must be lower than 1
+FRICTION_CONSTANT = 0.4  # must be lower than 1
 assert G > 0
 assert 0 < PLANE_INCLINATION < 90
-assert 0 <= FRICTION_CONSTANT <= 30
+assert 0 <= FRICTION_CONSTANT < 1
 
 # CAMERA CONSTANTS
 CAMERA_PADDING = 50
 CAMERA_TRACKING_BOUND = 100
 assert CAMERA_TRACKING_BOUND >= CAMERA_PADDING
+
+# FLAG HORIZONTAL CONSTANTS
+FLAG_PADDING = 100
+FLAG_SPACING_HORIZONTAL = 200
+
+# FLAG VERTICAL CONSTANTS
+FLAGS_START = 300
+FLAGS_SPACING_VERTICAL = 250
 
 
 # DON'T EDIT ANYTHING ELSE
@@ -140,8 +149,6 @@ class Skier(pygame.sprite.Sprite):
             self.pos.x = min(WIDTH - self.rect.w / 2, self.pos.x)
             self.velocity.x = 0
 
-        print(self.velocity, self.pos)
-
         self.rect.center = self.pos  # type: ignore
 
     def render(self, screen: pygame.Surface, camera: Camera) -> None:
@@ -152,6 +159,8 @@ def main():
     """ Handles the game startup. """
 
     pygame.init()
+    assert pygame.get_init(), "Pygame could not be initialized."
+
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('Skiing by limwa')
 
@@ -160,6 +169,10 @@ def main():
     background.fill((245, 245, 245))
 
     assets = {i[:-4]: load_image(i) for i in os.listdir(ASSETS)}
+
+    scaled_flag = pygame.transform.scale(assets["flag"][0], (31, 42))
+    assets["flag"] = scaled_flag, scaled_flag.get_rect()
+    assets["flag"][1].bottomright = (0, 0)
 
     def get_img_and_rect(img): return img, img.get_rect()
     Skier.init([
@@ -177,6 +190,13 @@ def main():
 
     player = Skier(Vector2(WIDTH / 2, 0), Vector2(0, 0))
     camera = Camera(CAMERA_TRACKING_BOUND, CAMERA_PADDING)
+
+    def generate_flag(y):
+        x_start = random.randint(FLAG_PADDING, WIDTH - FLAG_SPACING_HORIZONTAL - FLAG_PADDING)
+        x_end = x_start + FLAG_SPACING_HORIZONTAL
+        return ((x_start, y), (x_end, y))
+
+    flags = [generate_flag(FLAGS_START + i * FLAGS_SPACING_VERTICAL) for i in range(20)]
 
     clock = pygame.time.Clock()
     running = True
@@ -201,13 +221,16 @@ def main():
         camera.track(player.pos)  # type: ignore
 
         screen.blit(background, (0, 0))
+
         player.render(screen, camera)  # type: ignore
 
-        for i in range(200):
-            pygame.draw.line(screen, (0, 0, 0), camera.transform(
-                (10, i * 100)), camera.transform((WIDTH - 10, i * 100)), 2)
+        for flag in flags:
+            screen.blit(assets["flag"][0], camera.transform(flag[0]) + assets["flag"][1].topleft) # type: ignore
+            screen.blit(assets["flag"][0], camera.transform(flag[1]) + assets["flag"][1].topleft) # type: ignore
+            # pygame.draw.line(screen, (0, 0, 0), camera.transform(flag[0]), camera.transform(flag[1]), 2)
 
         pygame.display.flip()
+
 ###
 
 
