@@ -174,6 +174,10 @@ def main():
     assets["flag"] = scaled_flag, scaled_flag.get_rect()
     assets["flag"][1].bottomright = (0, 0)
 
+    scaled_tree = pygame.transform.scale(assets["tree"][0], (85, 82))
+    assets["tree"] = scaled_tree, scaled_tree.get_rect()
+    assets["tree"][1].bottomleft = (0, 0)
+
     def get_img_and_rect(img): return img, img.get_rect()
     Skier.init([
         (-90, assets["skier-3"]),
@@ -197,6 +201,22 @@ def main():
         return ((x_start, y), (x_end, y))
 
     flags = [generate_flag(FLAGS_START + i * FLAGS_SPACING_VERTICAL) for i in range(20)]
+
+    def generate_tree():
+        y = random.randrange(FLAGS_START, FLAGS_START + 19 * FLAGS_SPACING_VERTICAL)
+        prev_flag_index = (y - FLAGS_START) // FLAGS_SPACING_VERTICAL
+        prev_flag = flags[prev_flag_index]
+        next_flag = flags[prev_flag_index + 1]
+        min_x = min(prev_flag[0][0], next_flag[0][0]) - assets["tree"][1].width - 50
+        max_x = max(prev_flag[1][0], next_flag[1][0]) + 50
+
+        x = random.randint(0, WIDTH - max_x + min_x)
+        if x >= min_x:
+            x += max_x - min_x
+
+        return (x, y)
+
+    trees = [generate_tree() for i in range(50)]
 
     clock = pygame.time.Clock()
     running = True
@@ -229,6 +249,11 @@ def main():
             screen.blit(assets["flag"][0], camera.transform(flag[1]) + assets["flag"][1].topleft) # type: ignore
             # pygame.draw.line(screen, (0, 0, 0), camera.transform(flag[0]), camera.transform(flag[1]), 2)
 
+        for tree in trees:
+            screen.blit(assets["tree"][0], camera.transform(tree) + assets["tree"][1].topleft) # type: ignore
+
+        # for tree in trees:
+        #     pygame.draw.circle(screen, (0, 0, 0), camera.transform(tree), 2, 3)
         pygame.display.flip()
 
 ###
