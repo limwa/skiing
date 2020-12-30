@@ -19,6 +19,8 @@ import pygame.time
 import pygame.draw
 import pygame.transform
 
+from multipledispatch import dispatch
+
 from typing import List, Tuple, Union
 
 # EDIT THESE CONSTANTS AT YOUR WILL
@@ -77,18 +79,42 @@ def load_image(name: str):
     return img, img.get_rect()
 ###
 
+# TYPES
+
+COORDINATE = (int, float)
+VECTOR = (list, tuple, Vector2, pygame.Rect)
+
+###
+
 # GAME LOGIC
 class Camera:
-    def __init__(self, top: float, padding: float):
+
+    @dispatch(pygame.Surface, COORDINATE, COORDINATE)
+    def __init__(self, screen, top, padding):
+        self.screen = screen
         self.top = top
-        self.padding = padding
+        self.padding: float = padding
         self.offset = 0
 
-    def track(self, pos: Vector2) -> None:
-        self.offset = -pos.y + min(pos.y + self.padding, self.top)
+    @dispatch(COORDINATE)
+    def track(self, y):
+        self.offset = -y + min(y + self.padding, self.top)
 
-    def transform(self, vector: Union[Vector2, Tuple[float, float], List[float]]) -> Vector2:
-        return Vector2(vector[0], vector[1] + self.offset)
+    @dispatch(VECTOR)
+    def track(self, pos):
+        self.track(pos[1])
+
+    @dispatch(COORDINATE, COORDINATE)
+    def transform(self, x, y) -> Vector2:
+        return Vector2(x, y + self.offset)
+
+    @dispatch(VECTOR)
+    def transform(self, vector) -> Vector2:
+        return self.transform(vector[0], vector[1])
+
+    @dispatch(pygame.Surface, VECTOR)
+    def blit(self, surface, dest):
+        return self.screen.blit(surface, self.transform(dest))
 
 
 class Skier(pygame.sprite.Sprite):
@@ -98,13 +124,13 @@ class Skier(pygame.sprite.Sprite):
     def init(states: List[Tuple[float, Tuple[pygame.Surface, pygame.Rect]]]):
         Skier.__states = states
 
-    def __init__(self, pos: Vector2, velocity: Vector2) -> None:
+    @dispatch(Vector2, Vector2)
+    def __init__(self, pos, velocity):
         pygame.sprite.Sprite.__init__(self)
 
-        self.pos = pos
-        self.velocity = velocity
+        self.pos: Vector2 = pos
+        self.velocity: Vector2 = velocity
 
-        self.__angle = 0
         self.state = len(self.__states) // 2
 
     @property
@@ -136,7 +162,8 @@ class Skier(pygame.sprite.Sprite):
             PLANE_ACCELERATION * math.cos(self.__angle_rad) ** 2
         ) - FRICTION_CONSTANT * self.velocity  # type: ignore
 
-    def update(self, dt: float) -> None:
+    @dispatch(float)
+    def update(self, dt):
         self.velocity += self.acceleration * dt
         self.pos += self.velocity * dt
 
@@ -151,8 +178,9 @@ class Skier(pygame.sprite.Sprite):
 
         self.rect.center = self.pos  # type: ignore
 
-    def render(self, screen: pygame.Surface, camera: Camera) -> None:
-        screen.blit(self.image, camera.transform(self.rect.topleft))  # type: ignore
+    @dispatch(Camera)
+    def render(self, camera):
+        camera.blit(self.image, self.rect)  # type: ignore
 
 
 def main():
@@ -193,12 +221,12 @@ def main():
     ])  # type: ignore
 
     player = Skier(Vector2(WIDTH / 2, 0), Vector2(0, 0))
-    camera = Camera(CAMERA_TRACKING_BOUND, CAMERA_PADDING)
+    camera = Camera(screen, CAMERA_TRACKING_BOUND, CAMERA_PADDING)
 
     def generate_flag(y):
         x_start = random.randint(FLAG_PADDING, WIDTH - FLAG_SPACING_HORIZONTAL - FLAG_PADDING)
         x_end = x_start + FLAG_SPACING_HORIZONTAL
-        return ((x_start, y), (x_end, y))
+        return (assets["flag"][1].move(x_start, y), assets["flag"][1].move(x_end, y))
 
     flags = [generate_flag(FLAGS_START + i * FLAGS_SPACING_VERTICAL) for i in range(20)]
 
@@ -214,7 +242,7 @@ def main():
         if x >= min_x:
             x += max_x - min_x
 
-        return (x, y)
+        return assets["tree"][1].move(x, y)
 
     trees = [generate_tree() for i in range(50)]
 
@@ -242,7 +270,7 @@ def main():
 
         screen.blit(background, (0, 0))
 
-        player.render(screen, camera)  # type: ignore
+        player.render(camera)  # type: ignore
 
         for flag in flags:
             screen.blit(assets["flag"][0], camera.transform(flag[0]) + assets["flag"][1].topleft) # type: ignore
