@@ -3,11 +3,9 @@
 @author: limwa
 """
 
-import os
-import math
-import random
 
-from pygame import Vector2
+import os
+import random
 
 import pygame
 import pygame.locals
@@ -19,52 +17,9 @@ import pygame.time
 import pygame.draw
 import pygame.transform
 
-from multipledispatch import dispatch
-
-from typing import List, Tuple, Union
-
-# EDIT THESE CONSTANTS AT YOUR WILL
-# SCREEN CONSTANTS
-WIDTH = 800
-HEIGHT = 600
-
-# TIME CONSTANTS
-TIME_ADJUST = 0.001  # conversion of ms to s
-DIFICULTY_MULTIPLIER = 1
-assert DIFICULTY_MULTIPLIER > 0
-
-# ENVIRONMENT CONSTANTS
-G = 100
-PLANE_INCLINATION = 60  # inclination of the plane in degrees
-FRICTION_CONSTANT = 0.4  # must be lower than 1
-assert G > 0
-assert 0 < PLANE_INCLINATION < 90
-assert 0 <= FRICTION_CONSTANT < 1
-
-# CAMERA CONSTANTS
-CAMERA_PADDING = 50
-CAMERA_TRACKING_BOUND = 100
-assert CAMERA_TRACKING_BOUND >= CAMERA_PADDING
-
-# FLAG HORIZONTAL CONSTANTS
-FLAG_PADDING = 100
-FLAG_SPACING_HORIZONTAL = 200
-
-# FLAG VERTICAL CONSTANTS
-FLAGS_START = 300
-FLAGS_SPACING_VERTICAL = 250
-
-
-# DON'T EDIT ANYTHING ELSE
-
-
-TIME_SCALAR = DIFICULTY_MULTIPLIER * TIME_ADJUST
-PLANE_ACCELERATION = G * math.sin(math.radians(PLANE_INCLINATION))
-
-# ASSETS
-ROOT = os.path.join(os.path.dirname(__file__), '..')
-ASSETS = os.path.join(ROOT, 'assets')
-
+from config import *
+from player.local import PlayerLocal
+from camera import Camera
 
 def load_image(name: str):
     """ Loads an image from the assets folder. """
@@ -77,112 +32,8 @@ def load_image(name: str):
         img = img.convert_alpha()
 
     return img, img.get_rect()
-###
-
-# TYPES
-
-COORDINATE = (int, float)
-VECTOR = (list, tuple, Vector2, pygame.Rect)
-
-###
 
 # GAME LOGIC
-class Camera:
-
-    @dispatch(pygame.Surface, COORDINATE, COORDINATE)
-    def __init__(self, screen, top, padding):
-        self.screen = screen
-        self.top = top
-        self.padding: float = padding
-        self.offset = 0
-
-    @dispatch(COORDINATE)
-    def track(self, y):
-        self.offset = -y + min(y + self.padding, self.top)
-
-    @dispatch(VECTOR)
-    def track(self, pos):
-        self.track(pos[1])
-
-    @dispatch(COORDINATE, COORDINATE)
-    def transform(self, x, y) -> Vector2:
-        return Vector2(x, y + self.offset)
-
-    @dispatch(VECTOR)
-    def transform(self, vector) -> Vector2:
-        return self.transform(vector[0], vector[1])
-
-    @dispatch(pygame.Surface, VECTOR)
-    def blit(self, surface, dest):
-        return self.screen.blit(surface, self.transform(dest))
-
-
-class Skier(pygame.sprite.Sprite):
-    """ Represents a Skiier (player) in the game """
-
-    @staticmethod
-    def init(states: List[Tuple[float, Tuple[pygame.Surface, pygame.Rect]]]):
-        Skier.__states = states
-
-    @dispatch(Vector2, Vector2)
-    def __init__(self, pos, velocity):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.pos: Vector2 = pos
-        self.velocity: Vector2 = velocity
-
-        self.state = len(self.__states) // 2
-
-    @property
-    def state(self):
-        return self.__state
-
-    @state.setter
-    def state(self, s: int):
-        # We need the state to be valid at all times
-        s = max(s, 0)
-        s = min(s, len(self.__states) - 1)
-
-        self.__state = s
-
-        data = self.__states[s]
-
-        self.__angle = data[0]
-        self.__angle_rad = math.radians(self.__angle)
-
-        # rotate velocity towards the new direction
-        self.velocity = self.velocity.length() * Vector2(math.sin(self.__angle_rad), math.cos(self.__angle_rad))
-
-        self.image, self.rect = data[1]
-
-    @property
-    def acceleration(self) -> Vector2:
-        return Vector2(
-            0.5 * PLANE_ACCELERATION * math.sin(2 * self.__angle_rad),
-            PLANE_ACCELERATION * math.cos(self.__angle_rad) ** 2
-        ) - FRICTION_CONSTANT * self.velocity  # type: ignore
-
-    @dispatch(float)
-    def update(self, dt):
-        self.velocity += self.acceleration * dt
-        self.pos += self.velocity * dt
-
-        # We need to cap the horizontal component of the position vector
-        # to the interval [w / 2, WIDTH - w / 2],
-        # where w is the width of the image,
-        # so that the player doesn't fall off the screen
-        if not self.rect.w / 2 <= self.pos.x <= WIDTH - self.rect.w / 2:
-            self.pos.x = max(self.rect.w / 2, self.pos.x)
-            self.pos.x = min(WIDTH - self.rect.w / 2, self.pos.x)
-            self.velocity.x = 0
-
-        self.rect.center = self.pos  # type: ignore
-
-    @dispatch(Camera)
-    def render(self, camera):
-        camera.blit(self.image, self.rect)  # type: ignore
-
-
 def main():
     """ Handles the game startup. """
 
@@ -207,7 +58,7 @@ def main():
     assets["tree"][1].bottomleft = (0, 0)
 
     def get_img_and_rect(img): return img, img.get_rect()
-    Skier.init([
+    PlayerLocal.init([
         (-90, assets["skier-3"]),
         (-60, assets["skier-2"]),
         (-30, assets["skier-1"]),
@@ -220,7 +71,7 @@ def main():
         (90, get_img_and_rect(pygame.transform.flip(assets["skier-3"][0], True, False)))
     ])  # type: ignore
 
-    player = Skier(Vector2(WIDTH / 2, 0), Vector2(0, 0))
+    player = PlayerLocal(Vector2(WIDTH / 2, 0), Vector2(0, 0))
     camera = Camera(screen, CAMERA_TRACKING_BOUND, CAMERA_PADDING)
 
     def generate_flag(y):
@@ -268,6 +119,8 @@ def main():
         player.update(dt)
         camera.track(player.pos)  # type: ignore
 
+
+
         screen.blit(background, (0, 0))
 
         player.render(camera)  # type: ignore
@@ -283,7 +136,6 @@ def main():
         # for tree in trees:
         #     pygame.draw.circle(screen, (0, 0, 0), camera.transform(tree), 2, 3)
         pygame.display.flip()
-
 ###
 
 
