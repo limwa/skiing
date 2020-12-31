@@ -126,12 +126,12 @@ def main():
         player.render(camera)  # type: ignore
 
         for flag in flags:
-            screen.blit(assets["flag"][0], camera.transform(flag[0]) + assets["flag"][1].topleft) # type: ignore
-            screen.blit(assets["flag"][0], camera.transform(flag[1]) + assets["flag"][1].topleft) # type: ignore
+            screen.blit(assets["flag"][0], camera.transform(flag[0])) # type: ignore
+            screen.blit(assets["flag"][0], camera.transform(flag[1])) # type: ignore
             # pygame.draw.line(screen, (0, 0, 0), camera.transform(flag[0]), camera.transform(flag[1]), 2)
 
         for tree in trees:
-            screen.blit(assets["tree"][0], camera.transform(tree) + assets["tree"][1].topleft) # type: ignore
+            screen.blit(assets["tree"][0], camera.transform(tree)) # type: ignore
 
         # for tree in trees:
         #     pygame.draw.circle(screen, (0, 0, 0), camera.transform(tree), 2, 3)
