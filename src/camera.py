@@ -1,10 +1,11 @@
 """ Holds all logic related to the game's camera (the player's perspective) """
 
-from config import COORDINATE, VECTOR
 
 from multipledispatch import dispatch
 
 from pygame import Vector2, Surface
+
+from config import COORDINATE, VECTOR
 
 class Camera:
     """ This class is responsible for transforming an absolute position into a position that is relative to something it is tracking """

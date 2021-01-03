@@ -25,6 +25,7 @@ class PlayerLocal(pygame.sprite.Sprite):
         self.velocity: Vector2 = velocity
 
         self.state = len(self.__states) // 2
+        self.rect.center = self.pos
 
     @property
     def state(self):
