@@ -117,7 +117,7 @@ def main():
                 running = False
                 break
 
-            player.processEvent(event)
+            player.process_event(event)
 
         if not running:
             break

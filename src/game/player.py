@@ -110,7 +110,7 @@ class Player(pygame.sprite.Sprite):
                 self.world.gravity * math.cos(self.__angle_rad) ** 2
             ) - self.world.friction * self.velocity # type: ignore
 
-    def processEvent(self, event: Event):
+    def process_event(self, event: Event):
         if event.type == pygame.locals.KEYDOWN:
             if self.keyboard.is_turning_left(event):
                 self.state -= 1
