@@ -1,7 +1,7 @@
 """ Handles landscape generation and collision checks """
 
 import random
-from typing import List, Tuple, overload
+from typing import List, overload
 from pygame import Surface, Rect
 
 import game.assets
@@ -38,7 +38,7 @@ class Obstacle(Collidable):
 
 class Flag(Obstacle):
 
-    COLLISION_BOX_WIDTH = 5
+    COLLISION_BOX_WIDTH = 10
     def __init__(self, bottomright: Vector):
         image = game.assets.get_image('flag')
 
@@ -109,7 +109,7 @@ class Landscape:
 
         for tree in self.trees:
             tree.render(camera)
-            
+   
 
 class LocalLandscape(Landscape):
     def __init__(self, world: WorldConfig):

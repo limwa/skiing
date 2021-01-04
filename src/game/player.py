@@ -121,7 +121,7 @@ class Player(pygame.sprite.Sprite):
                 return
 
 
-    def update(self, dt):
+    def update(self, dt: float):
         self.velocity += self.acceleration * dt
         self.pos += self.velocity * dt
 
@@ -134,10 +134,10 @@ class Player(pygame.sprite.Sprite):
             self.pos.x = min(self.world.width - self.rect.w / 2, self.pos.x)
             self.velocity.x = 0
 
-        self.rect.center = self.pos  # type: ignore
+        self.rect.center = (int(self.pos.x), int(self.pos.y))
 
-    def render(self, camera):
-        camera.blit(self.image, self.rect)  # type: ignore
+    def render(self, camera: Camera):
+        camera.blit(self.image, self.rect)
         pygame.draw.circle(camera.screen, (0, 255, 255), camera.transform(self.rect.center), 2, 1)
 
 def init():

@@ -3,20 +3,13 @@
 @author: limwa
 """
 
-
-import os
-import random
-
 import pygame
-from pygame import Vector2
 import pygame.locals
 import pygame.display
-import pygame.image
 import pygame.event
-import pygame.sprite
 import pygame.time
 import pygame.draw
-import pygame.transform
+from pygame import Vector2
 
 from game.config import WorldConfig
 import game.player
@@ -70,12 +63,34 @@ def main():
     background = background.convert()
     background.fill((245, 245, 245))
 
-    player = game.player.Player(config, Vector2(config.width / 2, 0), Vector2(0, 0))
+    player = game.player.Player(config, Vector2(config.width / 2, 4000), Vector2(0, 0))
     camera = game.camera.Camera(screen, 100, 50)
     landscape = game.landscape.LocalLandscape(config)
 
     def tick(dt):
+        prev_pos = (player.pos.x, player.pos.y)
         player.update(dt)
+        
+
+        for tree in landscape.trees:
+            if tree.collides_at(prev_pos, player.pos):
+                player.velocity = Vector2(0, 0)
+                print('Collided with tree')
+                break
+
+        for pair in landscape.flag_pairs:
+            if pair.left.collides_at(prev_pos, player.pos) or pair.right.collides_at(prev_pos, player.pos):
+                player.velocity = Vector2(0,0)
+                print('Collided with flag')
+                
+            if pair.collides_at(prev_pos, player.pos):
+                print('Scored a point!')
+
+        if player.pos.y > config.height:
+            return False
+
+        return True
+
 
         # collisions = []
 
@@ -90,10 +105,10 @@ def main():
         pygame.display.flip()
 
 
-
-    clock = pygame.time.Clock()
     waiting = True
     running = True
+
+    clock = pygame.time.Clock()
 
     render() # We need to wait until the player hits the down key for the game to start
     while running and waiting:
@@ -122,7 +137,7 @@ def main():
         if not running:
             break
 
-        tick(dt)
+        running = tick(dt)
         render()
 ###
 
