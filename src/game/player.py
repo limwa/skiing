@@ -79,7 +79,6 @@ class Player(pygame.sprite.Sprite):
 
         self.keyboard = keyboard
         self.keyboard_lock_secret = self.keyboard.lock()
-        print(keyboard.k_left)
 
 
     @property

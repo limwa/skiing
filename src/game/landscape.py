@@ -162,13 +162,12 @@ class LocalLandscape(Landscape):
                 # should always be False, anyways
                 collides_with_flags = (tree.rect.colliderect(a_flag_pair.left.rect) or tree.rect.colliderect(a_flag_pair.right.rect) for a_flag_pair in flag_pairs)
 
-                if (collides_with_trees and not any(collides_with_trees)) and not any(collides_with_flags):
+                if not (collides_with_trees and any(collides_with_trees)) and not any(collides_with_flags):
                     break # we have a good tree (it doesn't collide with anything else), we can stop trying
 
             return tree
 
         for i in range(world.trees_ammount):
             trees.append(new_tree())
-            print(len(trees))
 
         super().__init__(world, flag_pairs, trees)
