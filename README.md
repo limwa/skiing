@@ -43,7 +43,7 @@ _WIP_
 - [ ] Adicionar animação de voo (não é usada no modo _slalom_)
 - [x] Posicionar postes
 - [x] Decorar o cenário (árvores e _moguls_)
-- [ ] Adicionar colisão (obstáculos, postes, ...)
+- [x] Adicionar colisão (obstáculos, postes, ...)
 - [ ] Adicionar meta e cálculo da pontuação final (penalização de 5? segundos por cada poste perdido)
 - [ ] Adicionar menu onde será possível alterar a dificuldade (velocidade e número de postes)
 - [ ] _TBD_
