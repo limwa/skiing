@@ -100,6 +100,8 @@ class Landscape:
         self.width = world.width
         self.height = world.height
 
+        self.world = world
+
         self.flag_pairs = flag_pairs
         self.trees = trees
 

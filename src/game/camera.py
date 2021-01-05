@@ -13,8 +13,7 @@ class Camera:
         self.offset = 0
 
     def track(self, pos: Vector):
-        y = pos[1]
-        self.offset = -y + min(y + self.padding, self.top)
+        self.offset = -pos[1] + min(pos[1] + self.padding, self.top)
 
     def transform(self, vector: Vector):
         return Vector2(vector[0], vector[1] + self.offset)

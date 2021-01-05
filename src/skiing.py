@@ -12,6 +12,7 @@ import pygame.draw
 from pygame import Vector2
 
 from game.config import WorldConfig
+import game
 import game.player
 import game.camera
 import game.landscape
@@ -63,9 +64,14 @@ def main():
     background = background.convert()
     background.fill((245, 245, 245))
 
-    player = game.player.Player(config, Vector2(config.width / 2, 4000), Vector2(0, 0))
-    camera = game.camera.Camera(screen, 100, 50)
+
     landscape = game.landscape.LocalLandscape(config)
+    player = game.player.Player(landscape, Vector2(config.width / 2, 0), Vector2(0, 0))
+
+    # current_game = game.Game(landscape, player)
+    # current_game.start()
+
+    camera = game.camera.Camera(screen, 100, 50)
 
     def tick(dt):
         prev_pos = (player.pos.x, player.pos.y)

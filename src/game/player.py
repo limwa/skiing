@@ -1,6 +1,7 @@
 """ Holds all logic related to players (both local and remote players) """
 import math
 import random
+from uuid import UUID, uuid4
 from typing import List, Tuple, Union
 
 import pygame.sprite
@@ -13,6 +14,7 @@ from pygame.event import Event
 import game.assets
 from game.config import WorldConfig
 from game.camera import Camera
+from game.landscape import Landscape
 
 class Keyboard:
     def __init__(self, k_left: int, k_right: int):
@@ -46,7 +48,7 @@ KEYBOARDS = [
     Keyboard(pygame.locals.K_LEFT, pygame.locals.K_RIGHT),
     Keyboard(pygame.locals.K_a, pygame.locals.K_d),
     Keyboard(pygame.locals.K_h, pygame.locals.K_k),
-    # Keyboard(pygame.locals.K_KP9)
+    Keyboard(pygame.locals.K_KP7, pygame.locals.K_KP9)
 ]
 
 def get_keyboard():
@@ -63,10 +65,12 @@ class Player(pygame.sprite.Sprite):
     def init(states):
         Player.__states = states
 
-    def __init__(self, world: WorldConfig, pos: Vector2, velocity: Vector2, keyboard: Union[Keyboard, None] = None):
+    def __init__(self, landscape: Landscape, pos: Vector2, velocity: Vector2, uuid: Union[UUID, None] = None, keyboard: Union[Keyboard, None] = None):
         pygame.sprite.Sprite.__init__(self)
 
-        self.world = world
+        self.uuid = uuid or uuid4()
+
+        self.landscape = landscape
         self.pos = pos
         self.velocity = velocity
 
@@ -106,9 +110,9 @@ class Player(pygame.sprite.Sprite):
     @property
     def acceleration(self) -> Vector2:
         return Vector2(
-                0.5 * self.world.gravity * math.sin(2 * self.__angle_rad),
-                self.world.gravity * math.cos(self.__angle_rad) ** 2
-            ) - self.world.friction * self.velocity # type: ignore
+                0.5 * self.landscape.world.gravity * math.sin(2 * self.__angle_rad),
+                self.landscape.world.gravity * math.cos(self.__angle_rad) ** 2
+            ) - self.landscape.world.friction * self.velocity # type: ignore
 
     def process_event(self, event: Event):
         if event.type == pygame.locals.KEYDOWN:
@@ -129,9 +133,9 @@ class Player(pygame.sprite.Sprite):
         # to the interval [w / 2, WIDTH - w / 2],
         # where w is the width of the image,
         # so that the player doesn't fall off the screen
-        if not self.rect.w / 2 <= self.pos.x <= self.world.width - self.rect.w / 2:
+        if not self.rect.w / 2 <= self.pos.x <= self.landscape.world.width - self.rect.w / 2:
             self.pos.x = max(self.rect.w / 2, self.pos.x)
-            self.pos.x = min(self.world.width - self.rect.w / 2, self.pos.x)
+            self.pos.x = min(self.landscape.world.width - self.rect.w / 2, self.pos.x)
             self.velocity.x = 0
 
         self.rect.center = (int(self.pos.x), int(self.pos.y))
