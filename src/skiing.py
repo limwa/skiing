@@ -60,91 +60,14 @@ def main():
 
     game.player.init()
 
-    background = pygame.Surface(screen.get_size())
-    background = background.convert()
-    background.fill((245, 245, 245))
-
-
     landscape = game.landscape.LocalLandscape(config)
     player = game.player.Player(landscape, Vector2(config.width / 2, 0), Vector2(0, 0))
 
-    # current_game = game.Game(landscape, player)
-    # current_game.start()
+    current_game = game.Game(screen, landscape, player)
+    player2 = game.player.Player(landscape, Vector2(0, 0), Vector2(0, 0))
+    current_game.add_player(player2)
+    current_game.start()
 
-    camera = game.camera.Camera(screen, 100, 50)
-
-    def tick(dt):
-        prev_pos = (player.pos.x, player.pos.y)
-        player.update(dt)
-        
-
-        for tree in landscape.trees:
-            if tree.collides_at(prev_pos, player.pos):
-                player.velocity = Vector2(0, 0)
-                print('Collided with tree')
-                break
-
-        for pair in landscape.flag_pairs:
-            if pair.left.collides_at(prev_pos, player.pos) or pair.right.collides_at(prev_pos, player.pos):
-                player.velocity = Vector2(0,0)
-                print('Collided with flag')
-                
-            if pair.collides_at(prev_pos, player.pos):
-                print('Scored a point!')
-
-        if player.pos.y > config.height:
-            return False
-
-        return True
-
-
-        # collisions = []
-
-    def render():
-        screen.blit(background, (0, 0))
-
-        camera.track(player.pos)
-
-        player.render(camera)
-        landscape.render(camera)
-
-        pygame.display.flip()
-
-
-    waiting = True
-    running = True
-
-    clock = pygame.time.Clock()
-
-    render() # We need to wait until the player hits the down key for the game to start
-    while running and waiting:
-        clock.tick(60)
-        for event in pygame.event.get():
-            if event.type == pygame.locals.QUIT:
-                running = False
-                break
-
-            if event.type == pygame.locals.KEYDOWN:
-                if event.key == pygame.locals.K_DOWN:
-                    waiting = False
-                    break
-
-    # After the player hits the down key, we need to start the game
-    while running:
-        dt = clock.tick(60) * config.time_factor
-
-        for event in pygame.event.get():
-            if event.type == pygame.locals.QUIT:
-                running = False
-                break
-
-            player.process_event(event)
-
-        if not running:
-            break
-
-        running = tick(dt)
-        render()
 ###
 
 

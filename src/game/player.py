@@ -21,22 +21,19 @@ class Keyboard:
         self.k_left = k_left
         self.k_right = k_right
         self.locked = False
-        self.lock_secret = -1
 
     def is_locked(self):
         return self.locked
 
-    def lock(self) -> Union[int, None]:
+    def lock(self) -> bool:
         if not self.locked:
             self.locked = True
-            self.lock_secret = random.randint(0, 2 ** 16)
-            return self.lock_secret
+            return True
 
-        return None
+        return False
 
-    def unlock(self, lock_secret: int):
-        if lock_secret == self.lock_secret:
-            self.locked = False
+    def unlock(self):
+        self.locked = False
 
     def is_turning_left(self, event: Event):
         return event.type == pygame.locals.KEYDOWN and event.key == self.k_left
@@ -63,7 +60,7 @@ class Player(pygame.sprite.Sprite):
 
     @staticmethod
     def init(states):
-        Player.__states = states
+        Player.__states: List[Tuple[int, game.assets.Image]] = states
 
     def __init__(self, landscape: Landscape, pos: Vector2, velocity: Vector2, uuid: Union[UUID, None] = None, keyboard: Union[Keyboard, None] = None):
         pygame.sprite.Sprite.__init__(self)
@@ -75,14 +72,13 @@ class Player(pygame.sprite.Sprite):
         self.velocity = velocity
 
         self.state = len(self.__states) // 2
-
         self.update(0)
 
         while keyboard is None or keyboard.is_locked():
             keyboard = get_keyboard()
 
         self.keyboard = keyboard
-        self.keyboard_lock_secret = self.keyboard.lock()
+        self.keyboard.lock()
 
 
     @property
@@ -105,7 +101,7 @@ class Player(pygame.sprite.Sprite):
         # rotate velocity towards the new direction
         self.velocity = self.velocity.length() * Vector2(math.sin(self.__angle_rad), math.cos(self.__angle_rad))
 
-        self.image, self.rect = data[1].surface, data[1].rect
+        self.image, self.rect = data[1].surface, data[1].rect.copy()
 
     @property
     def acceleration(self) -> Vector2:
@@ -123,7 +119,6 @@ class Player(pygame.sprite.Sprite):
             if self.keyboard.is_turning_right(event):
                 self.state += 1
                 return
-
 
     def update(self, dt: float):
         self.velocity += self.acceleration * dt
@@ -144,6 +139,16 @@ class Player(pygame.sprite.Sprite):
         camera.blit(self.image, self.rect)
         pygame.draw.circle(camera.screen, (0, 255, 255), camera.transform(self.rect.center), 2, 1)
 
+    def __eq__(self, o: object) -> bool:
+        if not isinstance(o, Player):
+            return False
+
+        return o.uuid == self.uuid
+
+    def __hash__(self) -> int:
+        return self.uuid.__hash__()
+
+
 def init():
     player_states: List[Tuple[int, game.assets.Image]] = []
     for angle, asset in [(0, "skier-0"), (-15, "skier-0"), (-30, "skier-1"), (-60, "skier-2"), (-90, "skier-3")]:
@@ -154,3 +159,4 @@ def init():
         player_states.append((-angle, game.assets.Image(flipped)))
 
     Player.init(player_states)
+

@@ -1,3 +1,6 @@
+from game.config import WorldConfig
+
+
 default_slalom_config = WorldConfig.builder() \
     .set_width(800) \
     .set_difficulty(1) \
@@ -13,10 +16,12 @@ default_slalom_config = WorldConfig.builder() \
     .set_trees_ammount(40) \
     .build()
 
-class Mode:
-    def __init__(self):
-        pass
-
-def Slalom(Mode):
-    def __init__(self):
-        
+default_downhill_config = WorldConfig.builder() \
+    .set_width(800) \
+    .set_height(9000) \
+    .set_difficulty(1) \
+    .set_gravity(100) \
+    .set_inclination(60) \
+    .set_friction(0.4) \
+    .set_trees_ammount(200) \
+    .build()
