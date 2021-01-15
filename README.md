@@ -44,8 +44,8 @@ _WIP_
 - [x] Posicionar postes
 - [x] Decorar o cenário (árvores e _moguls_)
 - [x] Adicionar colisão (obstáculos, postes, ...)
-- [ ] Adicionar meta e cálculo da pontuação final (penalização de 5? segundos por cada poste perdido)
+- [x] Adicionar meta e cálculo da pontuação final (penalização de 5? segundos por cada poste perdido)
 - [ ] Adicionar menu onde será possível alterar a dificuldade (velocidade e número de postes)
 - [ ] _TBD_
 
-_Atualizado pela última vez a 26/12/2020_
+_Atualizado pela última vez a 15/01/2021_
