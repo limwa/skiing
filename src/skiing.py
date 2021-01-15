@@ -55,14 +55,15 @@ def main():
     # current_game.add_player(player2)
     ended_successfuly = current_game.start()
 
-    current_game.game_millis += (config.flags_ammount - current_game.get_main_player().score) * 5000000 * config.time_factor
+    if ended_successfuly:
+        current_game.game_millis += (config.flags_ammount - current_game.get_main_player().score) * 5000000 * config.time_factor
 
-    while ended_successfuly:
-        for event in pygame.event.get():
-            if event.type == pygame.locals.QUIT:
-                return
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.locals.QUIT:
+                    return
 
-        renderer.render(current_game)
+            renderer.render(current_game)
 
 ###
 
