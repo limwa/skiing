@@ -18,12 +18,17 @@ class Collidable:
     @overload
     def collides_at(self, prev_pos, pos) -> bool: ...
 
+    # def collides_at(self, first, second = None) -> bool:
+    #     if second is None:
+    #         return bool(self.collision_box.collidepoint(first))
+
+    #     return len(self.collision_box.clipline(first, second)) != 0
+
     def collides_at(self, first, second = None) -> bool:
         if second is None:
-            return bool(self.collision_box.collidepoint(first))
+            return bool(self.collision_box.colliderect(first))
 
         return len(self.collision_box.clipline(first, second)) != 0
-
 class Obstacle(Collidable):
     def __init__(self, image: Surface, rect: Rect, collision_box: Rect):
         assert image.get_width() == rect.width
@@ -104,14 +109,6 @@ class Landscape:
 
         self.flag_pairs = flag_pairs
         self.trees = trees
-
-    def render(self, camera: Camera):
-        for pair in self.flag_pairs:
-            pair.render(camera)
-
-        for tree in self.trees:
-            tree.render(camera)
-   
 
 class LocalLandscape(Landscape):
     def __init__(self, world: WorldConfig):

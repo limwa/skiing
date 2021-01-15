@@ -11,11 +11,12 @@ import pygame.time
 import pygame.draw
 from pygame import Vector2
 
-from game.config import WorldConfig
 import game
 import game.player
 import game.camera
 import game.landscape
+import game.rendering
+from game.config import WorldConfig
 
 
 # GAME LOGIC
@@ -37,21 +38,6 @@ def main():
         .set_trees_ammount(40) \
         .build()
 
-        # self.width = 800
-        # self.height = 0
-
-        # self.difficulty = 1
-        # self.gravity = 100
-        # self.inclination = 60
-        # self.friction = 0.4
-
-        # # [start, distance_between_flags, margin_horizontal, margin_vertical]
-        # self.flags = [300, 200, 100, 250]
-        # self.trees_margin_to_flags = 50
-
-        # # [flag_pairs, trees]
-        # self.ammounts = [20, 50]
-
     pygame.init()
     assert pygame.get_init(), "Pygame could not be initialized."
 
@@ -60,13 +46,23 @@ def main():
 
     game.player.init()
 
+    renderer = game.rendering.Renderer(screen)
     landscape = game.landscape.LocalLandscape(config)
     player = game.player.Player(landscape, Vector2(config.width / 2, 0), Vector2(0, 0))
 
-    current_game = game.Game(screen, landscape, player)
-    player2 = game.player.Player(landscape, Vector2(0, 0), Vector2(0, 0))
-    current_game.add_player(player2)
-    current_game.start()
+    current_game = game.Game(renderer, landscape, player)
+    # player2 = game.player.Player(landscape, Vector2(0, 0), Vector2(0, 0))
+    # current_game.add_player(player2)
+    ended_successfuly = current_game.start()
+
+    current_game.game_millis += (config.flags_ammount - current_game.get_main_player().score) * 5000000 * config.time_factor
+
+    while ended_successfuly:
+        for event in pygame.event.get():
+            if event.type == pygame.locals.QUIT:
+                return
+
+        renderer.render(current_game)
 
 ###
 

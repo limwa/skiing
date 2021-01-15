@@ -1,6 +1,6 @@
 """ Holds all logic related to the game's camera (the player's perspective) """
 
-from pygame import Vector2, Surface, Rect
+from pygame import Vector2, Surface
 
 from game.types import Number, Vector
 

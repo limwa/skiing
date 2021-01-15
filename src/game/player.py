@@ -1,6 +1,5 @@
 """ Holds all logic related to players (both local and remote players) """
 import math
-import random
 from uuid import UUID, uuid4
 from typing import List, Tuple, Union
 
@@ -8,13 +7,12 @@ import pygame.sprite
 import pygame.draw
 import pygame.transform
 import pygame.locals
-from pygame import Vector2
+from pygame import Vector2, Rect
 from pygame.event import Event
 
 import game.assets
-from game.config import WorldConfig
 from game.camera import Camera
-from game.landscape import Landscape
+from game.landscape import Tree, Flag, FlagPair, Landscape
 
 class Keyboard:
     def __init__(self, k_left: int, k_right: int):
@@ -58,9 +56,13 @@ def get_keyboard():
 class Player(pygame.sprite.Sprite):
     """ Represents a local player in the game """
 
+    INVULN_TIME = 4
+    DOWN_TIME = 2
+
     @staticmethod
-    def init(states):
+    def init(states, down):
         Player.__states: List[Tuple[int, game.assets.Image]] = states
+        Player.__down: game.assets.Image = down
 
     def __init__(self, landscape: Landscape, pos: Vector2, velocity: Vector2, uuid: Union[UUID, None] = None, keyboard: Union[Keyboard, None] = None):
         pygame.sprite.Sprite.__init__(self)
@@ -72,14 +74,17 @@ class Player(pygame.sprite.Sprite):
         self.velocity = velocity
 
         self.state = len(self.__states) // 2
-        self.update(0)
+        self.collision_box = Rect(0, 0, 15, 15)
+        self.time_since_last_collision = Player.INVULN_TIME
+
+        self.score = 0
+        self.last_scored_pair: Union[FlagPair, None] = None
 
         while keyboard is None or keyboard.is_locked():
             keyboard = get_keyboard()
 
         self.keyboard = keyboard
         self.keyboard.lock()
-
 
     @property
     def state(self):
@@ -111,6 +116,9 @@ class Player(pygame.sprite.Sprite):
             ) - self.landscape.world.friction * self.velocity # type: ignore
 
     def process_event(self, event: Event):
+        if self.time_since_last_collision < Player.DOWN_TIME:
+            return
+
         if event.type == pygame.locals.KEYDOWN:
             if self.keyboard.is_turning_left(event):
                 self.state -= 1
@@ -121,23 +129,29 @@ class Player(pygame.sprite.Sprite):
                 return
 
     def update(self, dt: float):
-        self.velocity += self.acceleration * dt
-        self.pos += self.velocity * dt
+        if self.time_since_last_collision >= Player.DOWN_TIME:
+            self.velocity += self.acceleration * dt
+            self.pos += self.velocity * dt
 
-        # We need to cap the horizontal component of the position vector
-        # to the interval [w / 2, WIDTH - w / 2],
-        # where w is the width of the image,
-        # so that the player doesn't fall off the screen
-        if not self.rect.w / 2 <= self.pos.x <= self.landscape.world.width - self.rect.w / 2:
-            self.pos.x = max(self.rect.w / 2, self.pos.x)
-            self.pos.x = min(self.landscape.world.width - self.rect.w / 2, self.pos.x)
-            self.velocity.x = 0
+            # We need to cap the horizontal component of the position vector
+            # to the interval [w / 2, WIDTH - w / 2],
+            # where w is the width of the image,
+            # so that the player doesn't fall off the screen
+            if not self.rect.w / 2 <= self.pos.x <= self.landscape.world.width - self.rect.w / 2:
+                self.pos.x = max(self.rect.w / 2, self.pos.x)
+                self.pos.x = min(self.landscape.world.width - self.rect.w / 2, self.pos.x)
+                self.velocity.x = 0
 
         self.rect.center = (int(self.pos.x), int(self.pos.y))
 
+        self.time_since_last_collision += dt
+        self.collision_box.midbottom = self.rect.center
+        self.collision_box.move_ip(0, 5) # Position the collision box in the right place
+
     def render(self, camera: Camera):
-        camera.blit(self.image, self.rect)
-        pygame.draw.circle(camera.screen, (0, 255, 255), camera.transform(self.rect.center), 2, 1)
+        camera.blit(self.image if self.time_since_last_collision >= Player.DOWN_TIME else Player.__down.surface, self.rect)
+        # pygame.draw.rect(camera.screen, (200, 200, 200), Rect(camera.transform(self.collision_box.topleft), (self.collision_box.width, self.collision_box.height)), 2)
+        # pygame.draw.circle(camera.screen, (0, 255, 255), camera.transform(self.rect.center), 2, 1)
 
     def __eq__(self, o: object) -> bool:
         if not isinstance(o, Player):
@@ -158,5 +172,5 @@ def init():
         flipped = pygame.transform.flip(image.surface, True, False)
         player_states.append((-angle, game.assets.Image(flipped)))
 
-    Player.init(player_states)
+    Player.init(player_states, game.assets.get_image('skier-4'))
 
