@@ -42,7 +42,7 @@ def main():
     assert pygame.get_init(), "Pygame could not be initialized."
 
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption('Skiing by limwa')
+    pygame.display.set_caption('Skiing')
 
     game.player.init()
 
