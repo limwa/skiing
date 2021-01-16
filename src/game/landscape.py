@@ -44,8 +44,8 @@ class Obstacle(Collidable):
 class Flag(Obstacle):
 
     COLLISION_BOX_WIDTH = 10
-    def __init__(self, bottomright: Vector):
-        image = game.assets.get_image('flag')
+    def __init__(self, bottomright: Vector, is_last: bool):
+        image = game.assets.get_image('flag') if not is_last else game.assets.get_image('flag-final')
 
         # set the bottom right corner of the Rect at bottomright
         rect = image.rect.move(bottomright[0] - image.rect.width, bottomright[1] - image.rect.height)
@@ -63,8 +63,9 @@ class FlagPair(Collidable):
         self.left_x = left_x
         self.right_x = left_x + world.flags_distance_in_between
 
-        self.left = Flag((self.left_x, y))
-        self.right = Flag((self.right_x, y))
+        is_final = y == world.flags_start + (world.flags_ammount - 1) * world.flags_spacing_vertical
+        self.left = Flag((self.left_x, y), is_final)
+        self.right = Flag((self.right_x, y), is_final)
 
         collision_box = Rect(0, 0, world.flags_distance_in_between, FlagPair.COLLISION_BOX_HEIGHT)
         collision_box.bottomleft = self.left.rect.bottomright
@@ -77,7 +78,7 @@ class FlagPair(Collidable):
 
 class Tree(Obstacle):
 
-    COLLISION_BOX_HEIGHT = 5
+    COLLISION_BOX_HEIGHT = 10
     def __init__(self, center: Vector):
         image = game.assets.get_image('tree')
 

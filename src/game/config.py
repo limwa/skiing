@@ -30,7 +30,7 @@ class WorldConfig:
         self.is_downhill: bool = self.flags_ammount == 0
         self.is_slalom: bool = not self.is_downhill
 
-        self.height: int = params["height"] or 2 * self.flags_start + (self.flags_ammount - 1) * self.flags_spacing_vertical
+        self.height: int = params["height"] or 1.5 * self.flags_start + (self.flags_ammount - 1) * self.flags_spacing_vertical
 
         self.time_factor: float = 0.001 * params["difficulty"]
         self.gravity: float = params["gravity"] * math.sin(math.radians(params["inclination"]))

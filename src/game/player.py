@@ -64,6 +64,8 @@ class Player(pygame.sprite.Sprite):
         Player.__states: List[Tuple[int, game.assets.Image]] = states
         Player.__down: game.assets.Image = down
 
+        game.assets.get_sound('turn') # Load turn sound
+
     def __init__(self, landscape: Landscape, pos: Vector2, velocity: Vector2, uuid: Union[UUID, None] = None, keyboard: Union[Keyboard, None] = None):
         pygame.sprite.Sprite.__init__(self)
 
@@ -122,10 +124,12 @@ class Player(pygame.sprite.Sprite):
         if event.type == pygame.locals.KEYDOWN:
             if self.keyboard.is_turning_left(event):
                 self.state -= 1
+                game.assets.get_sound('turn').play()
                 return
 
             if self.keyboard.is_turning_right(event):
                 self.state += 1
+                game.assets.get_sound('turn').play()
                 return
 
     def update(self, dt: float):

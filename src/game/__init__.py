@@ -24,6 +24,9 @@ class Game:
 
         self.renderer = renderer
 
+        self.collision_sound = game.assets.get_sound('collision')
+        self.score_sound = game.assets.get_sound('score')
+
     def add_player(self, player: Player):
         self.players.append(player)
 
@@ -48,6 +51,7 @@ class Game:
                     if tree.collides_at(player.collision_box):
                         player.time_since_last_collision = 0
                         player.velocity = Vector2(0, 0)
+                        self.collision_sound.play()
 
             for pair in self.landscape.flag_pairs:
                 if player.time_since_last_collision >= Player.INVULN_TIME:
@@ -55,11 +59,13 @@ class Game:
                         player.time_since_last_collision = 0
                         player.last_scored_pair = pair
                         player.velocity = Vector2(0,0)
+                        self.collision_sound.play()
 
                     if player.last_scored_pair != pair:
                         if pair.collides_at(player.collision_box):
                                 player.last_scored_pair = pair
                                 player.score += 1
+                                self.score_sound.play()
 
             if player.pos.y > self.landscape.world.height:
                 self.running = False

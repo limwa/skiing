@@ -55,7 +55,7 @@ class Renderer:
         time = self.time_font.render(game.utils.format_millis(obj.game_millis), True, (0, 0, 0), Renderer.BACKGROUND_COLOR)
         time_rect = time.get_rect()
 
-        points = self.points_font.render(str(obj.get_main_player().score), True, (0, 0, 0), Renderer.BACKGROUND_COLOR)
+        points = self.points_font.render(str(obj.landscape.world.flags_ammount - obj.get_main_player().score), True, (0, 0, 0), Renderer.BACKGROUND_COLOR)
         points_rect = points.get_rect()
 
         points_rect.midbottom = self.header.center
