@@ -59,13 +59,15 @@ def main():
         current_game.game_millis += (config.flags_ammount - current_game.get_main_player().score) * 5000000 * config.time_factor
 
         clock = pygame.time.Clock()
-        while True:
+        while ended_successfuly:
             clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.locals.QUIT:
-                    return
+                    ended_successfuly = False
 
             renderer.render(current_game)
+
+    pygame.quit()
 
 ###
 
