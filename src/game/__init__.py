@@ -74,7 +74,9 @@ class Game:
         """ This function will block the executing environment, until the game ends. """
         self.start_millis = game.utils.current_millis() + 3000 if millis == -1 else millis
 
+        clock = pygame.time.Clock()
         while self.running:
+            clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.locals.QUIT:
                     self.running = None
@@ -86,7 +88,6 @@ class Game:
                 break
 
 
-        clock = pygame.time.Clock()
         while self.running:
             dt = clock.tick(60) * self.landscape.world.time_factor
 
