@@ -25,21 +25,53 @@
       };
     } {
       formatter = {pkgs, ...}: pkgs.alejandra;
-      
+
       packages = utils.lib.invokeAttrs {
         default = {outputs, ...}: outputs.packages.skiing;
-        
-        skiing = {pkgs, ...}: pkgs.python3.pkgs.callPackage ./nix/pkgs/skiing/package.nix {};
+
+        skiing = {pkgs, ...}:
+          pkgs.python3.pkgs.callPackage (
+            {
+              lib,
+              # Builders
+              buildPythonApplication,
+              # Build system and dependencies
+              hatchling,
+              pygame,
+            }:
+              buildPythonApplication {
+                pname = "skiing";
+                version = "0.0.1";
+
+                src = lib.fileset.toSource {
+                  root = ./.;
+
+                  fileset = lib.fileset.unions [
+                    ./skiing
+                    ./pyproject.toml
+                    ./README.md
+                    ./LICENSE
+                  ];
+                };
+
+                format = "pyproject";
+
+                build-system = [
+                  hatchling
+                ];
+
+                dependencies = [
+                  pygame
+                ];
+              }
+          ) {};
       };
 
       devShells = utils.lib.invokeAttrs {
         default = {outputs, ...}: outputs.devShells.python;
 
         # Python development shell
-        python = {
-          pkgs,
-          ...
-        }: let
+        python = {pkgs, ...}: let
           python = pkgs.python3.withPackages (ps: [
             ps.pygame
           ]);
