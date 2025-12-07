@@ -1,0 +1,16 @@
+[project]
+name = "skiing"
+version = "0.0.1"
+readme = "README.md"
+authors = [{ name = "André Lima", email = "me@limwa.pt" }]
+license-files = ["LICENSE"]
+dependencies = [
+    "pygame ~= 2.6"
+]
+
+[project.scripts]
+skiing = "skiing:main"
+
+[build-system]
+requires = ["hatchling ~= 1.27"]
+build-backend = "hatchling.build"
