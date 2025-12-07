@@ -1,4 +1,4 @@
-from game.config import WorldConfig
+from skiing.game.config import WorldConfig
 
 
 default_slalom_config = WorldConfig.builder() \

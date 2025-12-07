@@ -2,9 +2,9 @@
 import pygame.display
 from pygame import Rect, Surface
 
-import game.assets
-import game.utils
-from game.camera import Camera
+import skiing.game.assets
+import skiing.game.utils
+from skiing.game.camera import Camera
 
 class Renderer:
 
@@ -20,8 +20,8 @@ class Renderer:
 
         self.header = Rect(0, 0, 800, 75)
 
-        self.points_font = game.assets.get_font("Pixeboy", 48)
-        self.time_font = game.assets.get_font("Pixeboy", 32)
+        self.points_font = skiing.game.assets.get_font("Pixeboy", 48)
+        self.time_font = skiing.game.assets.get_font("Pixeboy", 32)
 
     def render(self, obj):
         main_player = obj.get_main_player()
@@ -52,7 +52,7 @@ class Renderer:
 
         self.screen.blit(self.background, (0, 0), self.header)
 
-        time = self.time_font.render(game.utils.format_millis(obj.game_millis), True, (0, 0, 0), Renderer.BACKGROUND_COLOR)
+        time = self.time_font.render(skiing.game.utils.format_millis(obj.game_millis), True, (0, 0, 0), Renderer.BACKGROUND_COLOR)
         time_rect = time.get_rect()
 
         points = self.points_font.render(str(obj.landscape.world.flags_ammount - obj.get_main_player().score), True, (0, 0, 0), Renderer.BACKGROUND_COLOR)

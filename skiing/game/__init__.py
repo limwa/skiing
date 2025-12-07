@@ -6,12 +6,12 @@ import pygame.time
 import pygame.display
 from pygame import Vector2
 
-import game.utils
-from game.landscape import Landscape
-from game.player import Player
-from game.rendering import Renderer
-import game.assets
-import game.rendering
+import skiing.game.utils
+from skiing.game.landscape import Landscape
+from skiing.game.player import Player
+from skiing.game.rendering import Renderer
+import skiing.game.assets
+import skiing.game.rendering
 
 class Game:
     def __init__(self, renderer: Renderer, landscape: Landscape, *players: Player):
@@ -24,8 +24,8 @@ class Game:
 
         self.renderer = renderer
 
-        self.collision_sound = game.assets.get_sound('collision')
-        self.score_sound = game.assets.get_sound('score')
+        self.collision_sound = skiing.game.assets.get_sound('collision')
+        self.score_sound = skiing.game.assets.get_sound('score')
 
     def add_player(self, player: Player):
         self.players.append(player)
@@ -41,7 +41,7 @@ class Game:
         return self.players[0]
 
     def update(self, dt):
-        self.game_millis = game.utils.current_millis() - self.start_millis
+        self.game_millis = skiing.game.utils.current_millis() - self.start_millis
 
         for player in self.players:
             player.update(dt)
@@ -72,7 +72,7 @@ class Game:
 
     def start(self, millis = -1):
         """ This function will block the executing environment, until the game ends. """
-        self.start_millis = game.utils.current_millis() + 3000 if millis == -1 else millis
+        self.start_millis = skiing.game.utils.current_millis() + 3000 if millis == -1 else millis
 
         clock = pygame.time.Clock()
         while self.running:

@@ -10,9 +10,9 @@ import pygame.locals
 from pygame import Vector2, Rect
 from pygame.event import Event
 
-import game.assets
-from game.camera import Camera
-from game.landscape import Tree, Flag, FlagPair, Landscape
+import skiing.game.assets
+from skiing.game.camera import Camera
+from skiing.game.landscape import Tree, Flag, FlagPair, Landscape
 
 class Keyboard:
     def __init__(self, k_left: int, k_right: int):
@@ -61,10 +61,10 @@ class Player(pygame.sprite.Sprite):
 
     @staticmethod
     def init(states, down):
-        Player.__states: List[Tuple[int, game.assets.Image]] = states
-        Player.__down: game.assets.Image = down
+        Player.__states: List[Tuple[int, skiing.game.assets.Image]] = states
+        Player.__down: skiing.game.assets.Image = down
 
-        game.assets.get_sound('turn') # Load turn sound
+        skiing.game.assets.get_sound('turn') # Load turn sound
 
     def __init__(self, landscape: Landscape, pos: Vector2, velocity: Vector2, uuid: Union[UUID, None] = None, keyboard: Union[Keyboard, None] = None):
         pygame.sprite.Sprite.__init__(self)
@@ -124,12 +124,12 @@ class Player(pygame.sprite.Sprite):
         if event.type == pygame.locals.KEYDOWN:
             if self.keyboard.is_turning_left(event):
                 self.state -= 1
-                game.assets.get_sound('turn').play()
+                skiing.game.assets.get_sound('turn').play()
                 return
 
             if self.keyboard.is_turning_right(event):
                 self.state += 1
-                game.assets.get_sound('turn').play()
+                skiing.game.assets.get_sound('turn').play()
                 return
 
     def update(self, dt: float):
@@ -168,13 +168,13 @@ class Player(pygame.sprite.Sprite):
 
 
 def init():
-    player_states: List[Tuple[int, game.assets.Image]] = []
+    player_states: List[Tuple[int, skiing.game.assets.Image]] = []
     for angle, asset in [(0, "skier-0"), (-15, "skier-0"), (-30, "skier-1"), (-60, "skier-2"), (-90, "skier-3")]:
-        image = game.assets.get_image(asset)
+        image = skiing.game.assets.get_image(asset)
         player_states.insert(0, (angle, image))
 
         flipped = pygame.transform.flip(image.surface, True, False)
-        player_states.append((-angle, game.assets.Image(flipped)))
+        player_states.append((-angle, skiing.game.assets.Image(flipped)))
 
-    Player.init(player_states, game.assets.get_image('skier-4'))
+    Player.init(player_states, skiing.game.assets.get_image('skier-4'))
 
