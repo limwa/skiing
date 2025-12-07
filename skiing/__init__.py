@@ -11,12 +11,12 @@ import pygame.time
 import pygame.draw
 from pygame import Vector2
 
-import game
-import game.player
-import game.camera
-import game.landscape
-import game.rendering
-from game.config import WorldConfig
+import skiing.game
+import skiing.game.player
+import skiing.game.camera
+import skiing.game.landscape
+import skiing.game.rendering
+from skiing.game.config import WorldConfig
 
 
 # GAME LOGIC
@@ -44,17 +44,17 @@ def main():
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption('Skiing')
 
-    game.player.init()
+    skiing.game.player.init()
 
-    renderer = game.rendering.Renderer(screen)
-    landscape = game.landscape.LocalLandscape(config)
-    player = game.player.Player(landscape, Vector2(config.width / 2, 0), Vector2(0, 0))
+    renderer = skiing.game.rendering.Renderer(screen)
+    landscape = skiing.game.landscape.LocalLandscape(config)
+    player = skiing.game.player.Player(landscape, Vector2(config.width / 2, 0), Vector2(0, 0))
 
-    current_game = game.Game(renderer, landscape, player)
+    current_game = skiing.game.Game(renderer, landscape, player)
     # player2 = game.player.Player(landscape, Vector2(0, 0), Vector2(0, 0))
     # current_game.add_player(player2)
     ended_successfuly = current_game.start()
-
+    
     if ended_successfuly:
         current_game.game_millis += (config.flags_ammount - current_game.get_main_player().score) * 5000000 * config.time_factor
 

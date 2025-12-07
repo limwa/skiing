@@ -2,7 +2,7 @@
 
 from pygame import Vector2, Surface
 
-from game.types import Number, Vector
+from skiing.game.types import Number, Vector
 
 class Camera:
     """ This class is responsible for transforming an absolute position into a position that is relative to something it is tracking """

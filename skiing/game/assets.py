@@ -7,7 +7,7 @@ import pygame.font
 import pygame.mixer
 from pygame import Surface
 
-FOLDER = os.path.join(os.path.dirname(__file__), '..', '..', 'assets')
+FOLDER = os.path.join(os.path.dirname(__file__), '..', 'assets')
 class Image:
     def __init__(self, surface: Surface):
         self.surface = surface

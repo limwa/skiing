@@ -4,17 +4,17 @@ import random
 from typing import List, overload
 from pygame import Surface, Rect
 
-import game.assets
-from game.camera import Camera
-from game.config import WorldConfig
-from game.types import Vector
+import skiing.game.assets
+from skiing.game.camera import Camera
+from skiing.game.config import WorldConfig
+from skiing.game.types import Vector
 
 class Collidable:
     def __init__(self, collision_box: Rect):
         self.collision_box = collision_box
 
     @overload
-    def collides_at(self, pos) -> bool: ...
+    def collides_at(self, prev_pos) -> bool: ...
     @overload
     def collides_at(self, prev_pos, pos) -> bool: ...
 
@@ -24,11 +24,12 @@ class Collidable:
 
     #     return len(self.collision_box.clipline(first, second)) != 0
 
-    def collides_at(self, first, second = None) -> bool:
-        if second is None:
-            return bool(self.collision_box.colliderect(first))
+    def collides_at(self, prev_pos, pos = None) -> bool:
+        if pos is None:
+            return bool(self.collision_box.colliderect(prev_pos))
 
-        return len(self.collision_box.clipline(first, second)) != 0
+        return len(self.collision_box.clipline(prev_pos, pos)) != 0
+        
 class Obstacle(Collidable):
     def __init__(self, image: Surface, rect: Rect, collision_box: Rect):
         assert image.get_width() == rect.width
@@ -45,7 +46,7 @@ class Flag(Obstacle):
 
     COLLISION_BOX_WIDTH = 10
     def __init__(self, bottomright: Vector, is_last: bool):
-        image = game.assets.get_image('flag') if not is_last else game.assets.get_image('flag-final')
+        image = skiing.game.assets.get_image('flag') if not is_last else skiing.game.assets.get_image('flag-final')
 
         # set the bottom right corner of the Rect at bottomright
         rect = image.rect.move(bottomright[0] - image.rect.width, bottomright[1] - image.rect.height)
@@ -80,7 +81,7 @@ class Tree(Obstacle):
 
     COLLISION_BOX_HEIGHT = 10
     def __init__(self, center: Vector):
-        image = game.assets.get_image('tree')
+        image = skiing.game.assets.get_image('tree')
 
         rect = image.rect.copy()
         rect.center = (int(center[0]), int(center[1]))
