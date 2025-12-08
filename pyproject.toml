@@ -5,11 +5,11 @@ readme = "README.md"
 authors = [{ name = "André Lima", email = "me@limwa.pt" }]
 license-files = ["LICENSE"]
 dependencies = [
-    "pygame ~= 2.6"
+  "pygame ~= 2.6"
 ]
 
 [project.scripts]
-skiing = "skiing:main"
+play_skiing = "skiing.__main__:main"
 
 [build-system]
 requires = ["hatchling ~= 1.27"]

@@ -1,16 +1,13 @@
 # Skiing
 
-## FPRO/MIEIC, 2020/21
-
-## André Costa Lima (up202008169)
-
-## 1MIEIC03
+- Unidade Curricular: FPRO/MIEIC, 2020/21
+- Autor: André Costa Lima (up202008169)
+- Turma: 1MIEIC03
 
 ### Objetivos
 
 1. Criar uma adaptação do jogo Skiing do Atari 2600.
 2. Adicionar um modo multijogador local ao jogo.
-
 3. Tentar adicionar um modo multijogador online ao jogo.
 
 ### Descrição
@@ -29,12 +26,15 @@ A nível do possível modo multijogador, a primeira implementação seria de mul
 
 ### UI
 
-_WIP_
+<p align="center" justify="center">
+    <img src="./docs/assets/gameplay.png" alt="Gameplay em modo slalom" /><br />
+    <strong>Fig 1.</strong> Gameplay em modo <i>slalom</i>.
+</p>
 
 ### Pacotes
 
+- Python 3.x
 - Pygame
-- _TBD_
 
 ### Tarefas
 
@@ -46,6 +46,42 @@ _WIP_
 - [x] Adicionar colisão (obstáculos, postes, ...)
 - [x] Adicionar meta e cálculo da pontuação final (penalização de 5? segundos por cada poste perdido)
 - [ ] Adicionar menu onde será possível alterar a dificuldade (velocidade e número de postes)
-- [ ] _TBD_
 
-_Atualizado pela última vez a 15/01/2021_
+### Execução
+
+Para executar o jogo, são suportados três métodos de execução. Para utilizadores de Nix e/ou de NixOS, o método recomendado é o método "Nix".
+
+#### Nix
+
+Para utilizadores de Nix, é possível executar o jogo, utilizando o seguinte comando:
+
+```bash
+nix run github:limwa/skiing
+```
+
+#### Python (com venv)
+
+Para executar o projeto dentro de um ambiente virtual de Python, é possível executar os seguintes comandos:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+
+pip install -e .
+play_skiing
+```
+
+#### Python (sem venv)
+
+Para executar o projeto sem utilizar um ambiente virtual de Python, é possível executar os seguintes comandos:
+
+```bash
+python -m pip install -r requirements.txt
+python -m skiing
+```
+
+### Licença
+
+Este projeto está sob a licença [MIT](./LICENSE).
+
+_Atualizado pela última vez a 08/12/2025_
